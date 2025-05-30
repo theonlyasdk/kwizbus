@@ -1,4 +1,5 @@
 let mcqs = {};
+let test_finished = false;
 
 function loadMCQs() {
     const fileInput = document.getElementById('fileInput').files[0];
@@ -23,13 +24,18 @@ function displayMCQs() {
         optionsDiv.classList.add('q-options');
         q.options.forEach((opt, i) => {
             const option_index = `${index}q${i}`;
-
             const radioDiv = document.createElement('div');
+
+            const check_correct = test_finished && i === q.answer_index;
+            const check_wrong = test_finished && i === q.checked_index;
+
             radioDiv.classList.add("form-check");
             radioDiv.innerHTML = `
                 <input class="form-check-input" type="radio" 
-                        name="${index}" value="${i}" id="${option_index}">
-                <label class="form-check-label" for="${option_index}">
+                        name="${index}" value="${i}" id="${option_index}"
+                        ${test_finished && i === q.checked_index ? "checked" : ""}
+                        onchange="updateCheckIndex(${index}, ${i})">
+                <label class="form-check-label ${check_wrong && !check_correct ? "text-danger-emphasis" : ""} ${check_correct ? "text-success-emphasis" : ""}" for="${option_index}">
                     ${opt}
                 </label>
             `;
@@ -55,7 +61,17 @@ function displayMCQs() {
     btn_submit.classList.remove("d-none");
 }
 
+function updateCheckIndex(index, checked_index) {
+    mcqs.items[index].checked_index = checked_index;
+}
+
 function submitTest() {
+    const submit_btn = document.getElementById("submit-test");
+    submit_btn.innerText = "Test Again";
+    submit_btn.addEventListener('click', () => {
+        window.location.reload();
+    });
+
     let score = 0;
     mcqs.items.forEach((q, index) => {
         const selected = document.querySelector(`input[name="${index}"]:checked`);
@@ -69,7 +85,8 @@ function submitTest() {
         </h2>
     `;
 
-    document.getElementById("submit-test").innerText = "Test Again";
+    test_finished = true;
+    displayMCQs();
 }
 
 function validateMCQData(mcq_data) {
@@ -98,13 +115,14 @@ function loadAndParseMCQsFromURL() {
         }
 
         mcqs = decoded_json;
-        form_title.innerText = mcqs.title;
+        if (mcqs.title)
+            form_title.innerText = mcqs.title;
 
         if (mcqs.author) {
             form_author.classList.remove("d-none");
             form_author.innerHTML = `By <b>${mcqs.author}</b>`;
         }
-    
+
         displayMCQs();
     } else {
         console.log('No data found in the URL.');
