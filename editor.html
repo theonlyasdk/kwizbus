@@ -65,7 +65,7 @@
                         onchange="importMCQs()">
                     <button
                         class="btn btn-outline-success flex-fill d-flex flex-row justify-content-center align-items-center"
-                        onclick="openImportMCQChooser()">
+                        onclick="openImportMCQChooser()" title="Import from JSON">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -76,7 +76,7 @@
                     </button>
                     <button
                         class="btn btn-outline-success flex-fill d-flex flex-row justify-content-center align-items-center"
-                        onclick="downloadMCQs()">
+                        onclick="downloadMCQs()" title="Export to JSON">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -88,6 +88,7 @@
                     <button
                         class="btn btn-outline-info p-2 flex-fill d-flex flex-row justify-content-center align-items-center"
                         onclick="copyLink()" id="copy-link" data-bs-toggle="popover" data-bs-title="Link Copied"
+                        title="Copy the permalink to this form. (Experimental)"
                         data-bs-placement="bottom"
                         data-bs-content="A permalink to this MCQ form has been copied. This feature is experimental.">
                         <div class="icon">
