@@ -206,26 +206,28 @@
                     <button type="button" class="btn-close" id="btn-generating-close" onclick="closeGeminiModal()"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="mcq-form-title" class="form-label">Topic</label>
-                        <input type="text" class="form-control" id="genai-topic"
-                            placeholder="Topic of the quiz">
+                <form onsubmit="doGenerateWithAI(event)">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="mcq-form-title" class="form-label">Topic</label>
+                            <input type="text" class="form-control" id="genai-topic" placeholder="Topic of the quiz" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mcq-form-author" class="form-label">No. of questions</label>
+                            <input type="number" class="form-control" id="genai-num-questions" placeholder="(Optional)"
+                                min="1" max="40" value="">
+                        </div>
+                        <div class="alert alert-warning" role="alert">
+                            <small><b>Disclaimer: </b> Generated content may include inappropriate or inaccurate
+                                information.</small>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="mcq-form-author" class="form-label">No. of questions</label>
-                        <input type="number" class="form-control" id="genai-num-questions" placeholder="(Optional)">
+                    <div class="modal-footer d-flex justify-content-between">
+                        <small><b>Model:&nbsp;&nbsp;</b><code id="genai-model-name">gemma-3-27b-it</code></small>
+                        <button type="submit" class="btn btn-primary" aria-label="Close"
+                            id="btn-generating">Generate</button>
                     </div>
-                    <div class="alert alert-warning" role="alert">
-                        <small><b>Disclaimer: </b> Generated content may include inappropriate or inaccurate
-                        information.</small>
-                    </div>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <small><b>Model:&nbsp;&nbsp;</b><code id="genai-model-name">gemma-3-27b-it</code></small>
-                    <button type="button" class="btn btn-primary" aria-label="Close" id="btn-generating"
-                        onclick="doGenerateWithAI()">Generate</button>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -293,8 +295,6 @@
         window.gen_ai = gen_ai
         window.gen_ai.HarmBlockThreshold = HarmBlockThreshold
         window.gen_ai.HarmCategory = HarmCategory
-
-        console.log(await window.gen_ai.models.list());
     }
 
     await tryInitGenerativeFeatures();

@@ -233,8 +233,6 @@ function downloadMCQs() {
 
 function extractBasePath(url) {
   const parts = url.split('/');
-  // If the URL ends with a slash, it's already a base path.
-  // Otherwise, remove the last part (filename or specific page).
   if (parts[parts.length - 1] === '' || !parts[parts.length - 1].includes('.')) {
     return url;
   } else {
@@ -300,7 +298,7 @@ function importMCQs() {
 async function askGeminiToGenerateJson(user_prompt) {
     if (typeof window.gen_ai === undefined) {
         showToast("Generative Features Disabled", "Gemini API failed to initialize. Reload this page and and try again.")
-        return
+        return;
     }
 
     if (user_prompt === null || user_prompt === "") {
@@ -413,7 +411,9 @@ function closeGeminiModal() {
     modal_instance.hide();
 }
 
-async function doGenerateWithAI() {
+async function doGenerateWithAI(event) {
+    event.preventDefault();
+
     const user_prompt = document.getElementById("genai-topic").value;
     const num_questions = document.getElementById("genai-num-questions").value;
     const prompt_modal = document.getElementById("gemini-prompt-modal");
@@ -439,12 +439,14 @@ async function doGenerateWithAI() {
     mcqs = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
     console.log(mcqs);
     prompt_modal.removeEventListener('hide.bs.modal', prevent_hide_modal);
-
     modal_instance.hide();
+
+    btn_generating.innerText = "Generate";
+    btn_generating.removeAttribute("disabled");
+    btn_generating_close.removeAttribute("disabled");
 
     document.getElementById('mcq-form-title').value = mcqs.title;
     document.getElementById('mcq-form-author').value = mcqs.author;
-
 
     itemsChanged();
     saveSettings();
