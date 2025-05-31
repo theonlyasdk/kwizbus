@@ -32,8 +32,6 @@ function itemsChanged() {
     updateNoItemsPlaceholderVisibility();
 }
 
-JavaScript
-
 function scrollElementToBottomIfOutsideViewport(elementId) {
     const element = document.getElementById(elementId);
 
