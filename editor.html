@@ -281,7 +281,7 @@
 <script type="module">
     import { GoogleGenAI, HarmBlockThreshold, HarmCategory } from "@google/genai";
 
-    async function tryInitGenerativeFeatures() {
+    function tryInitGenerativeFeatures() {
         const API_KEY = localStorage.getItem("gemini.api-key");
 
         if (API_KEY === "") {
@@ -302,7 +302,7 @@
         window.gen_ai.HarmCategory = HarmCategory
     }
 
-    await tryInitGenerativeFeatures();
+    tryInitGenerativeFeatures();
 </script>
 
 <script src="scripts/instantpage-5.2.0.js"></script>
