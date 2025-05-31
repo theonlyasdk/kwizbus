@@ -41,8 +41,13 @@
     <div class="panel-container d-flex justify-content-between with-gap-2em">
         <div class="left-panel mb-3">
             <div class="card-body">
-                <h2 class="card-title mb-3"><b>Add Question</b></h2>
-                <div class="mb-3">
+                <div class="d-flex flex-row justify-content-between mb-3">
+                    <h2 class="card-title"><b>Add Question</b></h2>
+                    <button type="button" class="btn btn-outline-info" title="Generate with AI" data-bs-toggle="modal"
+                        data-bs-target="#gemini-prompt-modal"><i class="bi bi-stars"></i></button>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="question-number">Q1.</span>
                     <input type="text" class="form-control" id="question-input" placeholder="Enter a question">
                 </div>
                 <div class="mb-3">
@@ -57,9 +62,10 @@
                     <button class="btn btn-primary d-flex flex-fill flex-row justify-content-center align-items-center"
                         onclick="addMCQ()">
                         <i class="bi bi-plus d-flex"></i>
-                        &nbsp;Add MCQ
+                        &nbsp;Insert Question
                     </button>
                 </div>
+                <hr>
                 <div class="d-flex flex-row justify-content-between gap-2">
                     <input type="file" class="d-none" id="import-mcq" aria-label="Import MCQs" accept="application/json"
                         onchange="importMCQs()">
@@ -87,10 +93,7 @@
                     </button>
                     <button
                         class="btn btn-outline-info p-2 flex-fill d-flex flex-row justify-content-center align-items-center"
-                        onclick="copyLink()" id="copy-link" data-bs-toggle="popover" data-bs-title="Link Copied"
-                        title="Copy the permalink to this form. (Experimental)"
-                        data-bs-placement="bottom"
-                        data-bs-content="A permalink to this MCQ form has been copied. This feature is experimental.">
+                        onclick="copyLink()" id="copy-link" title="Copy the permalink to this form. (Experimental)">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -145,6 +148,9 @@
                 <b>Nothing here...!</b>
             </div>
             <div id="mcq-list" class="content card-body full-height"></div>
+            <small class="footer mb-3">
+                (C) 2025 <b><a href="https://theonlyasdk.github.io/">theonlyasdk</a></b>
+            </small>
         </div>
     </div>
 
@@ -173,10 +179,52 @@
                         <input type="text" class="form-control" id="mcq-form-author"
                             placeholder="Author of the form (Optional)">
                     </div>
+                    <hr>
+                    <label for="mcq-form-author" class="form-label">Gemini API Key</label>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" id="gemini-api-key" name="gemini-api-key"
+                            placeholder="Required for generative features" value="">
+                        <span class="input-group-text">
+                            <i class="bi bi-eye-fill" id="togglePassword" style="cursor: pointer"
+                                title="Toggle password visibility"></i>
+                        </span>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
                         onclick="saveSettings()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="gemini-prompt-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b>Generate Questions</b></h5>
+                    <button type="button" class="btn-close" id="btn-generating-close" onclick="closeGeminiModal()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="mcq-form-title" class="form-label">Topic</label>
+                        <input type="text" class="form-control" id="genai-topic"
+                            placeholder="Topic of questions to generate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mcq-form-author" class="form-label">No. of questions</label>
+                        <input type="number" class="form-control" id="genai-num-questions" placeholder="(Optional)">
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        <small><b>Disclaimer: </b> Generated content may produce inappropriate or inaccurate
+                        information.</small>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <small><b>Model:&nbsp;&nbsp;</b><code id="genai-model-name">gemma-3-27b-it</code></small>
+                    <button type="button" class="btn btn-primary" aria-label="Close" id="btn-generating"
+                        onclick="doGenerateWithAI()">Generate</button>
                 </div>
             </div>
         </div>
@@ -203,26 +251,58 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
     crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@latest/dist/index.global.js"></script>
+<script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://esm.run/@google/genai"
+      }
+    }
+</script>
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#gemini-api-key");
+
+    togglePassword.addEventListener("click", function () {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        this.classList.toggle('bi-eye-fill');
+        this.classList.toggle('bi-eye-slash-fill');
+    });
+</script>
+<script type="module">
+    import { GoogleGenAI, HarmBlockThreshold, HarmCategory } from "@google/genai";
+
+    async function tryInitGenerativeFeatures() {
+        const API_KEY = localStorage.getItem("gemini.api-key");
+
+        if (API_KEY === "") {
+            console.warn("API keys not found, disabling Generative Features");
+            return;
+        }
+
+        const gen_ai = new GoogleGenAI({
+            apiKey: API_KEY
+        });
+
+        console.info("Generative features are enabled. (Provided by Google Gemini)");
+
+        // Expose all module properties and functions to global scope
+        // so that we can use them in other scripts
+        window.gen_ai = gen_ai
+        window.gen_ai.HarmBlockThreshold = HarmBlockThreshold
+        window.gen_ai.HarmCategory = HarmCategory
+
+        console.log(await window.gen_ai.models.list());
+    }
+
+    await tryInitGenerativeFeatures();
+</script>
 
 <script src="scripts/instantpage-5.2.0.js"></script>
 <script src="scripts/bs_functions.js"></script>
 <script src="scripts/editor.js"></script>
 <script src="scripts/scroll_to_top.js"></script>
-
-<script>
-    const popover_elements = document.querySelectorAll('[data-bs-toggle="popover"]')
-    const popover_list = [...popover_elements].map(popover => new bootstrap.Popover(popover, {
-        trigger: 'focus'
-    }));
-
-    popover_elements.forEach(popover => {
-        popover.addEventListener("show.bs.popover", () => {
-            setTimeout(() => {
-                const bs_popover = bootstrap.Popover.getOrCreateInstance(popover);
-                bs_popover.hide();
-            }, 4000);
-        });
-    });
-</script>
 
 </html>

@@ -3,6 +3,9 @@ let mcqs = JSON.parse(localStorage.getItem('mcqs')) || {
 };
 let options = [];
 let answer_index = -1;
+let GEMINI_API_KEY = localStorage.getItem('gemini.api-key');
+let generating_content = false;
+const MODEL_NAME = "gemma-3-27b-it";
 
 function updateClearButtonVisibility() {
     const clearBtn = document.getElementById('btn-clear-questions');
@@ -19,6 +22,11 @@ function updateNoItemsPlaceholderVisibility() {
 }
 
 function itemsChanged() {
+    const question_no = document.getElementById('question-number');
+    question_no.innerText = `Q${mcqs.items.length + 1}.`;
+    const api_key_input = document.getElementById('gemini-api-key');
+    api_key_input.value = localStorage.getItem('gemini.api-key');
+
     displayMCQList();
     updateClearButtonVisibility();
     updateNoItemsPlaceholderVisibility();
@@ -29,7 +37,7 @@ function addOption() {
         value: "",
         answer: false,
     });
-    
+
     documentScrollToBottom();
     displayOptionsList();
 }
@@ -39,15 +47,18 @@ function displayOptionsList() {
     let options_list_markup = "";
 
     options.forEach((option, option_index) => {
+        option_index++;
+
         const option_value = option.value;
         const option_placeholder = `Option ${option_index}`;
         const option_aria_label = 'MCQ Option';
-        const option_id = option_index;
+        const option_id = option_index - 1;
         const option_is_answer = option.answer;
         const answer_button_class = option_is_answer ? "btn-success" : "btn-outline-success";
 
         options_list_markup += `
             <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">${option_index}.</span>
                 <input type="text" class="form-control" 
                         value="${option_value}" 
                         placeholder="${option_placeholder}" 
@@ -113,7 +124,6 @@ function addMCQ() {
         alert("Alert: Please set the correct answer");
         return;
     }
-
 
     mcqs.items.push({ question, description, options: options_as_list, answer_index });
     saveMCQs();
@@ -198,6 +208,8 @@ function clearAllOptions() {
 function clearAllMCQs() {
     if (confirm('Are you sure you want to clear all MCQs?')) {
         mcqs.items = [];
+        mcqs.title = "";
+        mcqs.author = "";
         localStorage.removeItem('mcqs');
         itemsChanged();
     }
@@ -246,11 +258,16 @@ function copyLink() {
     }, 4000);
 }
 
+function saveAPIKeys() {
+    localStorage.setItem('gemini.api-key', document.getElementById('gemini-api-key').value);
+}
+
 function saveSettings() {
     mcqs['title'] = document.getElementById('mcq-form-title').value;
     mcqs['author'] = document.getElementById('mcq-form-author').value;
 
     saveMCQs();
+    saveAPIKeys();
 }
 
 function openImportMCQChooser() {
@@ -269,7 +286,161 @@ function importMCQs() {
     reader.readAsText(fileInput);
 }
 
+async function askGeminiToGenerateJson(user_prompt) {
+    if (typeof window.gen_ai === undefined) {
+        showToast("Generative Features Disabled", "Gemini API failed to initialize. Reload this page and and try again.")
+        return
+    }
+
+    if (user_prompt === null || user_prompt === "") {
+        alert("Please enter the prompt to generate questions!")
+        return;
+    }
+
+    const safety_settings = [
+        {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_ONLY_HIGH',
+        },
+        {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+        }
+    ]
+
+    const example_data_format = `
+            {
+                "items": [
+                    {
+                        "question": "What is the chemical symbol for water?",
+                        "description": "",
+                        "options": [
+                            "CO2",
+                            "H2O",
+                            "O2",
+                            "N2"
+                        ],
+                        "answer_index": 1
+                    },
+                    {
+                        "question": "Which of the following is a noble gas?",
+                        "description": "",
+                        "options": [
+                            "Nitrogen",
+                            "Carbon",
+                            "Helium",
+                            "Oxygen"
+                        ],
+                        "answer_index": 2
+                    }
+                ],
+                "title": "Basic Chemistry Knowledge",
+                "author": ""
+            }
+    `;
+
+    const prompt = `
+            Rules for generating:
+
+            1. Do not use markdown. Instead use ASCII/Unicode characters.
+            2. Do not produce any system messages or any other kind of non-json text
+            3. Generate MCQs in the specified JSON format only.
+            4. Create the MCQs according to the topic only
+            5. Your task is to create MCQs. Do not do anything else.
+            6. Strictly avoid using markdown and emit only JSON in plain text without markdown characters surrounding it.
+            7. Never use **text** or __**text**__ or __text__ to format anything.
+            8. Always use numbers for lists, not - dashes
+            9. Also generate and set title with it.
+            10. Do not set author.
+            11. Do not put answers in the description of the question.
+            12. Answers shall only be put in the options of the questions
+            13. Put any clarifications to the question in the description (e.g if the question contains any constant, you might want to put in the constant in the description for easy access, but only rarely. don't put any thing that is indirectly the answer of the question in the description)
+
+            Use the following format for generating content:
+            ${example_data_format}
+
+            Now create an MCQ json file for the prompt: '${user_prompt}'
+    `;
+
+    try {
+        console.log(`Using ${MODEL_NAME} to generate prompt ${user_prompt}`);
+
+        const response = await window.gen_ai.models.generateContent({
+            model: MODEL_NAME,
+            contents: prompt,
+        });
+
+        let text = response.text;
+        text = text.replace("```json", "").replace("```", "");
+
+        console.log("Gemini returned the following JSON (raw)");
+        console.log(text);
+        return JSON.parse(text);
+
+    } catch (error) {
+        console.error("Error generating content: ", error, `\nPrompt provided: ${user_prompt}\nModel used: ${MODEL_NAME}`);
+
+        if (error.toString().includes("API key not valid")) {
+            showToast("Failed to generate questions", "Invalid Gemini API key. Please set it in the settings!");
+        } else {
+            showToast("Failed to generate questions",
+                `
+                    Unexpected error while trying to generate content: <br><code>${error}</code><br>
+                    Please report this problem by opening a <a href="https://github.com/theonlyasdk/kwizbus/issues/new">GitHub issue</a>!
+                `);
+        }
+    }
+}
+
+function closeGeminiModal() {
+    if (generating_content)
+        return;
+
+    const prompt_modal = document.getElementById("gemini-prompt-modal");
+    const modal_instance = bootstrap.Modal.getInstance(prompt_modal);
+
+    modal_instance.hide();
+}
+
+async function doGenerateWithAI() {
+    const user_prompt = document.getElementById("genai-topic").value;
+    const num_questions = document.getElementById("genai-num-questions").value;
+    const prompt_modal = document.getElementById("gemini-prompt-modal");
+    const modal_instance = bootstrap.Modal.getInstance(prompt_modal);
+
+    const btn_generating = document.getElementById("btn-generating");
+    const btn_generating_close = document.getElementById("btn-generating-close");
+
+    const prevent_hide_modal = event => {
+        event.preventDefault();
+    }
+
+    prompt_modal.addEventListener('hide.bs.modal', prevent_hide_modal);
+
+    btn_generating.innerText = "Generating...";
+    btn_generating.setAttribute("disabled", "disabled");
+    btn_generating_close.setAttribute("disabled", "disabled");
+
+    let amount_of_questions = num_questions !== "" ? `Amount of questions to generate: ${num_questions}` : "";
+
+    generating_content = true;
+
+    mcqs = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
+    console.log(mcqs);
+    prompt_modal.removeEventListener('hide.bs.modal', prevent_hide_modal);
+
+    modal_instance.hide();
+
+    document.getElementById('mcq-form-title').value = mcqs.title;
+    document.getElementById('mcq-form-author').value = mcqs.author;
+
+
+    itemsChanged();
+    saveSettings();
+}
+
 document.getElementById('mcq-form-title').value = mcqs.title ?? "";
 document.getElementById('mcq-form-author').value = mcqs.author ?? "";
+document.getElementById("genai-model-name").innerText = MODEL_NAME;
 
 itemsChanged();

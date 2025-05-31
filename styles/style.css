@@ -65,7 +65,7 @@ html {
     /* Total screen height - top - Bootstrap mb-3 class (value 16px) */
     height: calc(100vh - 1.5em - 16px);
     padding-right: 1.5em;
-    border-right: #5e6b75 solid 1px;
+    border-right: #44494ec4 solid 1px;
 }
 
 .right-panel {
@@ -162,6 +162,10 @@ html {
     font-family: "Zen Dots", sans-serif;
 }
 
+.footer {
+    width: 100%;
+    text-align: center;
+}
 @media (min-width: 769px) {
     .scroll-top-btn {
         display: none !important;
