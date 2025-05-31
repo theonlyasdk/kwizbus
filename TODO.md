@@ -3,7 +3,7 @@
 - [x] Improve layout
 
 ## MCQ CREATOR
-- [ ] Allow changing correct answer after adding question
+- [x] Allow changing correct answer after adding question
 - [x] Use 2 pane layout: left - input fields, right - added answers
 - [x] Use nice list view
 
