@@ -231,11 +231,22 @@ function downloadMCQs() {
     document.body.removeChild(downloadAnchor);
 }
 
+function extractBasePath(url) {
+  const parts = url.split('/');
+  // If the URL ends with a slash, it's already a base path.
+  // Otherwise, remove the last part (filename or specific page).
+  if (parts[parts.length - 1] === '' || !parts[parts.length - 1].includes('.')) {
+    return url;
+  } else {
+    return parts.slice(0, -1).join('/') + '/';
+  }
+}
+
 function copyLink() {
     const btn_copy_link = document.getElementById("copy-link");
     const copy_link_innerhtml = btn_copy_link.innerHTML;
 
-    const baseUrl = "http://127.0.0.1:5500/index.html";
+    const baseUrl = `${extractBasePath(document.location.href)}index.html`;
     const encodedDataStr = encodeURIComponent(JSON.stringify(mcqs, null, 2));
     const finalUrl = `${baseUrl}?data=${encodedDataStr}`;
 
