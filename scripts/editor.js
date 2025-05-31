@@ -170,16 +170,19 @@ function displayMCQList() {
         div.className = 'card mb-3';
         div.innerHTML = `
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <!-- <div class="d-flex justify-content-between align-items-start mb-3">
                     <small>Question <b>#${index + 1}</b></small>
                     <button class="btn btn-danger btn-sm" onclick="removeMCQ(${index})">Delete</button>
-                </div>
-                <div class="mb-4">
-                    <h2 class="card-text">${q.question}</h2>
+                </div> -->
+                <div class="mb-3">
+                    <div class="d-flex align-items-start mt-1">
+                        <h2 class="card-text flex-fill"><b>Q${index + 1}.</b> ${q.question}</h2>
+                        <button class="btn btn-danger btn-sm" onclick="removeMCQ(${index})">Delete</button>
+                    </div>
                     <div class="question-description">${q.description}</div>                
                 </div>
                 <b>Options:</b>
-                <div class="row mb-2">
+                <div class="row mb-3">
                     ${q.options.map((opt, i) => `<div class="col-12"><span><b>${i + 1}.</b> ${opt}</span></div>`).join('')}
                 </div>
                 <p class="card-text d-flex align-items-center gap-2">
@@ -432,6 +435,14 @@ function closeGeminiModal() {
 async function doGenerateWithAI(event) {
     event.preventDefault();
 
+    if (GEMINI_API_KEY === null || GEMINI_API_KEY === "") {
+        showToast("Operation Cancelled",
+            `Please set your <b>Gemini API key</b> in the settings!<br>
+            You can get it from <a href='https://aistudio.google.com' target='_blank'>Google AI Studio</a>`
+        );
+        return;
+    }
+
     const user_prompt = document.getElementById("genai-topic").value;
     const num_questions = document.getElementById("genai-num-questions").value;
     const prompt_modal = document.getElementById("gemini-prompt-modal");
@@ -470,8 +481,10 @@ async function doGenerateWithAI(event) {
     saveSettings();
 }
 
-document.getElementById('mcq-form-title').value = mcqs.title ?? "";
-document.getElementById('mcq-form-author').value = mcqs.author ?? "";
-document.getElementById("genai-model-name").innerText = MODEL_NAME;
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('mcq-form-title').value = mcqs.title ?? "";
+    document.getElementById('mcq-form-author').value = mcqs.author ?? "";
+    document.getElementById("genai-model-name").innerText = MODEL_NAME;
 
-itemsChanged();
+    itemsChanged();
+});

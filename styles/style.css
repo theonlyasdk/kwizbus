@@ -4,6 +4,7 @@
 * {
     scrollbar-width: thin;
     scrollbar-color: #888 #f1f1f100;
+    font-display: block;
 }
 
 *::-webkit-scrollbar {
@@ -98,8 +99,6 @@ html {
 
     /* Total screen height - top - Bootstrap mb-3 class (value 16px) */
     height: calc(100vh - 1.5em - 16px);
-    padding-right: 1.5em;
-    border-right: #44494ec4 solid 1px;
 
     overflow-y: auto;
     overflow-x: visible;
@@ -204,6 +203,24 @@ html {
     text-align: center;
 }
 
+.card {
+    box-shadow: 4px 6px 14px -2px #00000031;
+}
+
+.modal.fade .modal-dialog {
+    transform-origin: calc(100vw - 10px) 10px;
+    transform: scale(0.6);
+    transition: transform 0.4s cubic-bezier(.08, .57, .17, 1), opacity 0.3s cubic-bezier(.08, .57, .17, 1);
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+.modal.fade {
+    transition: opacity 0.1s cubic-bezier(.08, .57, .46, .99);
+}
+
 @media (min-width: 769px) {
     .scroll-top-btn {
         display: none !important;
@@ -213,6 +230,7 @@ html {
 @media (max-width: 768px) {
     .panel-container {
         flex-direction: column;
+        gap: 1em;
     }
 
     .left-panel,
@@ -224,11 +242,24 @@ html {
     .left-panel {
         position: initial;
         height: fit-content;
-        border-right: none;
         padding-right: 0px;
     }
 
     body {
         overflow: scroll;
+    }
+
+    .modal.fade .modal-dialog {
+        transform-origin: calc(100vw - 20vw) calc(100vh - 10vh);
+        transform: scale(0.6);
+        transition: transform 0.4s cubic-bezier(.08, .57, .17, 1), opacity 0.3s cubic-bezier(.08, .57, .17, 1);
+    }
+
+    .modal.show .modal-dialog {
+        transform: none;
+    }
+
+    .modal.fade {
+        transition: opacity 0.1s cubic-bezier(.08, .57, .46, .99);
     }
 }
