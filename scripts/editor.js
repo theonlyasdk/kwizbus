@@ -100,28 +100,21 @@ function deleteOption(option_index) {
     displayOptionsList();
 }
 
-function addMCQ() {
+function addMCQ(event) {
+    if (event)
+        event.preventDefault();
+
     const question = document.getElementById('question-input').value;
     const description = document.getElementById('question-description').value;
     const options_as_list = options.map(opt => opt.value.trim());
-
-    if (!question) {
-        alert("Alert: Please enter a question!");
-        return;
-    }
 
     if (options_as_list.length < 2) {
         alert("Alert: Needs at least 2 options");
         return;
     }
 
-    if (answer_index >= options.length) {
-        alert("Alert: Answer index out of range");
-        return;
-    }
-
     if (answer_index == -1) {
-        alert("Alert: Please set the correct answer");
+        alert("Alert: Please set a correct answer");
         return;
     }
 
