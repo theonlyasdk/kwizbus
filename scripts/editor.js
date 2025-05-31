@@ -482,6 +482,15 @@ async function doGenerateWithAI(event) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const gemini_prompt_modal = document.querySelector("#gemini-prompt-modal.modal.fade .modal-dialog");
+    const settings_modal = document.getElementById("settings-modal");
+    const btn_gemini = document.getElementById("btn-generate");
+    const btn_settings = document.getElementById("btn-settings");
+    const btn_gemini_rect = btn_gemini.getBoundingClientRect();
+
+    gemini_prompt_modal.style.transformOrigin = `${btn_gemini_rect.x} ${btn_gemini_rect.y}`;
+    settings_modal.style.transformOrigin = `${btn_gemini.left} ${btn_gemini.top}`
+
     document.getElementById('mcq-form-title').value = mcqs.title ?? "";
     document.getElementById('mcq-form-author').value = mcqs.author ?? "";
     document.getElementById("genai-model-name").innerText = MODEL_NAME;
