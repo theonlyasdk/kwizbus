@@ -190,8 +190,10 @@ function answerSelectionChanged(index, sender) {
 }
 
 function documentScrollToBottom() {
-    document.documentElement.scrollTop = document.documentElement.scrollHeight;
+    if (window.innerWidth >= 768)
+        document.documentElement.scrollTop = document.documentElement.scrollHeight;
 }
+
 
 function clearAllOptions() {
     options = [];
