@@ -32,11 +32,33 @@ function itemsChanged() {
     updateNoItemsPlaceholderVisibility();
 }
 
+JavaScript
+
+function scrollElementToBottomIfOutsideViewport(elementId) {
+    const element = document.getElementById(elementId);
+
+    if (element) {
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        if (rect.bottom > viewportHeight / 1.8) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        } else {
+        }
+    }
+}
+
 function addOption() {
     options.push({
         value: "",
         answer: false,
     });
+
+    if (window.innerWidth <= 768)
+        scrollElementToBottomIfOutsideViewport('btn-add-option');
 
     documentScrollToBottom();
     displayOptionsList();
@@ -183,8 +205,11 @@ function answerSelectionChanged(index, sender) {
 }
 
 function documentScrollToBottom() {
-    if (window.innerWidth >= 768)
+    if (window.innerWidth >= 768) {
         document.documentElement.scrollTop = document.documentElement.scrollHeight;
+        const left_panel = document.getElementById("left-panel");
+        left_panel.scrollTop = left_panel.scrollHeight;
+    }
 }
 
 
@@ -227,12 +252,12 @@ function downloadMCQs() {
 }
 
 function extractBasePath(url) {
-  const parts = url.split('/');
-  if (parts[parts.length - 1] === '' || !parts[parts.length - 1].includes('.')) {
-    return url;
-  } else {
-    return parts.slice(0, -1).join('/') + '/';
-  }
+    const parts = url.split('/');
+    if (parts[parts.length - 1] === '' || !parts[parts.length - 1].includes('.')) {
+        return url;
+    } else {
+        return parts.slice(0, -1).join('/') + '/';
+    }
 }
 
 function copyLink() {

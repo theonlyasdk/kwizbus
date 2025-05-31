@@ -2,6 +2,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
 
 * {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f100;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #00000000;
+    border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+*::-webkit-scrollbar-corner {
+    background: #f1f1f1;
+}
+
+*::-webkit-scrollbar-button {
+    display: none;
+}
+
+* {
     /* Crazy huh */
     transition: all 500ms cubic-bezier(.1, .2, 0, .98);
     font-family: "Source Sans 3", sans-serif;
@@ -59,13 +91,18 @@ html {
     margin-top: 1.4em;
 }
 
+
 .left-panel {
     position: sticky;
     top: 1.5em;
+
     /* Total screen height - top - Bootstrap mb-3 class (value 16px) */
     height: calc(100vh - 1.5em - 16px);
     padding-right: 1.5em;
     border-right: #44494ec4 solid 1px;
+
+    overflow-y: auto;
+    overflow-x: visible;
 }
 
 .right-panel {
@@ -166,6 +203,7 @@ html {
     width: 100%;
     text-align: center;
 }
+
 @media (min-width: 769px) {
     .scroll-top-btn {
         display: none !important;
