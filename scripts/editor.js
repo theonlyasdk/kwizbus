@@ -506,6 +506,8 @@ async function doGenerateWithAI(event) {
 
     quiz = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
 
+    generating_content = false;
+
     prompt_modal.removeEventListener('hide.bs.modal', prevent_hide_modal);
     modal_instance.hide();
 
