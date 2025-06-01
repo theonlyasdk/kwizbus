@@ -11,6 +11,7 @@
   <script src="scripts/bs_color_mode.js"></script>
 </head>
 
+<!-- Inline styles to override all other styles -->
 <body style="filter: blur(5px); opacity: 0; transform: scale(1.2); transition: all 700ms cubic-bezier(.08, .57, .17, 1); overflow: hidden;">
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
@@ -47,10 +48,10 @@
       <p>Welcome to <b class="navbar-brand">Kwizbus</b>! This website allows you to create your own MCQs (Multiple
         Choice Questions) and test
         yourself (or others) with it! You can also load pre-made MCQs with this tool!</p>
-      <p><b>To start, please load an MCQ .json file created with the MCQ Creator tool!</b></p>
+      <p><b>To start, please load a .json file created with the Quiz Creator tool!</b></p>
     </div>
     <div class="input-group mb-3" id="file-input-container">
-      <input type="file" class="form-control" id="fileInput" accept="application/json" onchange="loadMCQs()">
+      <input type="file" class="form-control" id="fileInput" accept="application/json" onchange="loadQuizFromFileInput()">
     </div>
 
     <div id="quiz-container"></div>

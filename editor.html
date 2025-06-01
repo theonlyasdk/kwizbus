@@ -8,11 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/bs-popover.css">
     <script src="scripts/fade_in_page.js"></script>
     <script src="scripts/bs_color_mode.js"></script>
 </head>
 
+<!-- Inline styles to override all other styles -->
 <body style="filter: blur(5px); opacity: 0; transform: scale(1.2); transition: all 700ms cubic-bezier(.08, .57, .17, 1); overflow: hidden;">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -42,7 +42,7 @@
     <div class="panel-container d-flex justify-content-between with-gap-2em">
         <div class="card left-panel mb-3" id="left-panel">
             <div class="card-body">
-                <form onsubmit="addMCQ(event)">
+                <form onsubmit="addQuestion(event)">
                     <div class="d-flex flex-row justify-content-between mb-3">
                         <h1 class="card-title align-content-center" style="margin-bottom: 0;"><b>Add Question</b></h1>
                         <button type="button" class="btn btn-outline-info" title="Generate with AI"
@@ -90,7 +90,7 @@
                     </button>
                     <button
                         class="btn btn-outline-success flex-fill d-flex flex-row justify-content-center align-items-center"
-                        onclick="downloadMCQs()" title="Export to JSON">
+                        onclick="downloadQuizAsJSON()" title="Export to JSON">
                         <div class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -125,7 +125,7 @@
                                 d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5" />
                         </svg>
                     </button>
-                    <button class="btn btn-primary" id="btn-clear-questions" onclick="clearAllMCQs()">Clear All</button>
+                    <button class="btn btn-primary" id="btn-clear-questions" onclick="clearAllQuestions()">Clear All</button>
                 </div>
             </div>
             <div class="nothing-here text-muted" id="nothing-here">
@@ -190,7 +190,7 @@
                     <hr>
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <label for="mcq-form-author">Gemini API Key</label>
-                        <a href="https://aistudio.google.com">Get it from here</a>
+                        <a href="https://aistudio.google.com" target="_blank">Get it from here</a>
                     </div>
                     <div class="input-group mb-3">
                         <input type="password" class="form-control" id="gemini-api-key" name="gemini-api-key"
@@ -266,14 +266,6 @@
     integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
     crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@latest/dist/index.global.js"></script>
-<script type="importmap">
-    {
-      "imports": {
-        "@google/genai": "https://esm.run/@google/genai"
-      }
-    }
-</script>
 <script>
     const togglePassword = document.querySelector("#togglePassword");
     const password = document.querySelector("#gemini-api-key");
@@ -286,7 +278,7 @@
     });
 </script>
 <script type="module">
-    import { GoogleGenAI, HarmBlockThreshold, HarmCategory } from "@google/genai";
+    import { GoogleGenAI, HarmBlockThreshold, HarmCategory } from "https://esm.run/@google/genai";
 
     function tryInitGenerativeFeatures() {
         const API_KEY = localStorage.getItem("gemini.api-key");

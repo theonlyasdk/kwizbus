@@ -1,5 +1,7 @@
-let mcqs = JSON.parse(localStorage.getItem('mcqs')) || {
-    items: []
+let quiz = JSON.parse(localStorage.getItem('quiz')) || {
+    items: [],
+    title: "",
+    author: "",
 };
 let options = [];
 let answer_index = -1;
@@ -10,24 +12,24 @@ const MODEL_NAME = "gemma-3-27b-it";
 function updateClearButtonVisibility() {
     const clearBtn = document.getElementById('btn-clear-questions');
     if (clearBtn) {
-        clearBtn.style.display = mcqs.items.length === 0 ? 'none' : '';
+        clearBtn.style.display = quiz.items.length === 0 ? 'none' : '';
     }
 }
 
 function updateNoItemsPlaceholderVisibility() {
     const clearBtn = document.getElementById('nothing-here');
     if (clearBtn) {
-        clearBtn.style.display = mcqs.items.length === 0 ? '' : 'none';
+        clearBtn.style.display = quiz.items.length === 0 ? '' : 'none';
     }
 }
 
-function itemsChanged() {
+function updateUIElements() {
     const question_no = document.getElementById('question-number');
-    question_no.innerText = `Q${mcqs.items.length + 1}.`;
+    question_no.innerText = `Q${quiz.items.length + 1}.`;
     const api_key_input = document.getElementById('gemini-api-key');
     api_key_input.value = localStorage.getItem('gemini.api-key');
 
-    displayMCQList();
+    displayQuestions();
     updateClearButtonVisibility();
     updateNoItemsPlaceholderVisibility();
 }
@@ -71,7 +73,7 @@ function displayOptionsList() {
 
         const option_value = option.value;
         const option_placeholder = `Option ${option_index}`;
-        const option_aria_label = 'MCQ Option';
+        const option_aria_label = 'Multiple Choice Option';
         const option_id = option_index - 1;
         const option_is_answer = option.answer;
         const answer_button_class = option_is_answer ? "btn-success" : "btn-outline-success";
@@ -120,7 +122,7 @@ function deleteOption(option_index) {
     displayOptionsList();
 }
 
-function addMCQ(event) {
+function addQuestion(event) {
     if (event)
         event.preventDefault();
 
@@ -138,21 +140,21 @@ function addMCQ(event) {
         return;
     }
 
-    mcqs.items.push({ question, description, options: options_as_list, answer_index });
-    saveMCQs();
-    itemsChanged();
+    quiz.items.push({ question, description, options: options_as_list, answer_index });
+    saveQuiz();
+    updateUIElements();
     clearAllOptions();
     documentScrollToBottom();
 }
 
-function saveMCQs() {
-    localStorage.setItem('mcqs', JSON.stringify(mcqs));
+function saveQuiz() {
+    localStorage.setItem('quiz', JSON.stringify(quiz));
 }
 
-function displayMCQList() {
+function displayQuestions() {
     const list = document.getElementById('mcq-list');
     list.innerHTML = '';
-    mcqs.items.forEach((q, index) => {
+    quiz.items.forEach((q, index) => {
         let options = q.options;
         let option_elements = "";
 
@@ -170,14 +172,10 @@ function displayMCQList() {
         div.className = 'card mb-3';
         div.innerHTML = `
             <div class="card-body">
-                <!-- <div class="d-flex justify-content-between align-items-start mb-3">
-                    <small>Question <b>#${index + 1}</b></small>
-                    <button class="btn btn-danger btn-sm" onclick="removeMCQ(${index})">Delete</button>
-                </div> -->
                 <div class="mb-3 q-header">
                     <div class="d-flex align-items-start mt-1 q-question-container">
                         <h2 class="card-text flex-fill"><b>Q${index + 1}.</b> <span class="q-question">${q.question}</span></h2>
-                        <button class="btn btn-danger btn-sm" onclick="removeMCQ(${index})">Delete</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeQuestion(${index})">Delete</button>
                     </div>
                     <div class="question-description">${q.description}</div>                
                 </div>
@@ -200,9 +198,9 @@ function displayMCQList() {
 }
 
 function answerSelectionChanged(index, sender) {
-    mcqs.items[index].answer_index = sender.selectedIndex;
-    displayMCQList();
-    saveMCQs();
+    quiz.items[index].answer_index = sender.selectedIndex;
+    displayQuestions();
+    saveQuiz();
 }
 
 function documentScrollToBottom() {
@@ -222,34 +220,54 @@ function clearAllOptions() {
     question.value = "";
     description.value = "";
 
-    displayMCQList();
+    displayQuestions();
     displayOptionsList();
 }
 
-function clearAllMCQs() {
-    if (confirm('Are you sure you want to clear all MCQs?')) {
-        mcqs.items = [];
-        mcqs.title = "";
-        mcqs.author = "";
-        localStorage.removeItem('mcqs');
-        itemsChanged();
+function clearAllQuestions() {
+    if (confirm('Are you sure you want to clear all questions? This will reset the quiz.')) {
+        quiz.items = [];
+        quiz.title = "";
+        quiz.author = "";
+        localStorage.removeItem('quiz');
+        updateUIElements();
     }
 }
 
-function removeMCQ(index) {
-    mcqs.items.splice(index, 1);
-    localStorage.setItem('mcqs', JSON.stringify(mcqs));
-    itemsChanged();
+function removeQuestion(index) {
+    quiz.items.splice(index, 1);
+    localStorage.setItem('quiz', JSON.stringify(quiz));
+    updateUIElements();
 }
 
-function downloadMCQs() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mcqs, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', 'mcqs.json');
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    document.body.removeChild(downloadAnchor);
+function textToFilename(text, extension = ".json") {
+  if (typeof text !== 'string') {
+    return null;
+  }
+
+  let filename = text.toLowerCase();
+  filename = filename.replace(/[^a-z0-9\s_-]/g, '');
+  filename = filename.replace(/[\s_-]+/g, '_');
+  filename = filename.replace(/^_+|_+$/g, '');
+
+  if (filename === '' || filename.match(/^_+$/)) {
+    return null;
+  }
+
+  return filename + extension;
+}
+
+function downloadQuizAsJSON() {
+    const json_data_str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(quiz, null, 2));
+    const download_anchor = document.createElement('a');
+    const filename = textToFilename(quiz.title);
+
+    download_anchor.setAttribute('href', json_data_str);
+    download_anchor.setAttribute('download', filename || "mcqs.json");
+
+    document.body.appendChild(download_anchor);
+    download_anchor.click();
+    document.body.removeChild(download_anchor);
 }
 
 function extractBasePath(url) {
@@ -265,11 +283,11 @@ function copyLink() {
     const btn_copy_link = document.getElementById("copy-link");
     const copy_link_innerhtml = btn_copy_link.innerHTML;
 
-    const baseUrl = `${extractBasePath(document.location.href)}index.html`;
-    const encodedDataStr = encodeURIComponent(JSON.stringify(mcqs, null, 2));
-    const finalUrl = `${baseUrl}?data=${encodedDataStr}`;
+    const base_url = `${extractBasePath(document.location.href)}index.html`;
+    const encoded_data_str = encodeURIComponent(JSON.stringify(quiz, null, 2));
+    const final_url = `${base_url}?data=${encoded_data_str}`;
 
-    navigator.clipboard.writeText(finalUrl).then(() => {
+    navigator.clipboard.writeText(final_url).then(() => {
         btn_copy_link.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"/></svg>
             Copied!
@@ -279,8 +297,8 @@ function copyLink() {
             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17q.425 0 .713-.288T13 16t-.288-.712T12 15t-.712.288T11 16t.288.713T12 17m-1-4h2V7h-2zm1 9q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"/></svg>
             &nbsp;Error!
         `;
-        console.log(`Failed to copy ${finalUrl}: ${err}`);
-        console.log('Unexpected error', `Failed to copy ${finalUrl}`, err);
+        console.log(`Failed to copy ${final_url}: ${err}`);
+        console.log('Unexpected error', `Failed to copy ${final_url}`, err);
     });
 
     setTimeout(() => {
@@ -293,10 +311,10 @@ function saveAPIKeys() {
 }
 
 function saveSettings() {
-    mcqs['title'] = document.getElementById('mcq-form-title').value;
-    mcqs['author'] = document.getElementById('mcq-form-author').value;
+    quiz['title'] = document.getElementById('mcq-form-title').value;
+    quiz['author'] = document.getElementById('mcq-form-author').value;
 
-    saveMCQs();
+    saveQuiz();
     saveAPIKeys();
 }
 
@@ -305,15 +323,18 @@ function openImportMCQChooser() {
 }
 
 function importMCQs() {
-    const fileInput = document.getElementById('import-mcq').files[0];
-    if (!fileInput) return alert('Please select a file');
+    const file_input_element = document.getElementById('import-mcq').files[0];
+    
+    if (!file_input_element) 
+        return alert('Please select a file');
+    
     const reader = new FileReader();
     reader.onload = function (event) {
-        mcqs = JSON.parse(event.target.result);
-        itemsChanged();
+        quiz = JSON.parse(event.target.result);
+        updateUIElements();
         saveSettings();
     };
-    reader.readAsText(fileInput);
+    reader.readAsText(file_input_element);
 }
 
 async function askGeminiToGenerateJson(user_prompt) {
@@ -322,11 +343,12 @@ async function askGeminiToGenerateJson(user_prompt) {
         return;
     }
 
-    if (user_prompt === null || user_prompt === "") {
-        alert("Please enter the prompt to generate questions!")
+    if (!user_prompt) {
+        alert("Please enter the prompt to generate questions!");
         return;
     }
 
+    // FIXME: Currently unused
     const safety_settings = [
         {
             category: 'HARM_CATEGORY_HARASSMENT',
@@ -393,7 +415,7 @@ async function askGeminiToGenerateJson(user_prompt) {
     `;
 
     try {
-        console.log(`Using ${MODEL_NAME} to generate prompt ${user_prompt}`);
+        console.log(`Generative Features: Using '${MODEL_NAME}'. Given prompt: '${user_prompt}'`);
 
         const response = await window.gen_ai.models.generateContent({
             model: MODEL_NAME,
@@ -403,8 +425,8 @@ async function askGeminiToGenerateJson(user_prompt) {
         let text = response.text;
         text = text.replace("```json", "").replace("```", "");
 
-        console.log("Gemini returned the following JSON (raw)");
-        console.log(text);
+        console.log("Data recieved from Gemini (filtered):\n", text);
+
         return JSON.parse(text);
 
     } catch (error) {
@@ -481,8 +503,8 @@ async function doGenerateWithAI(event) {
 
     generating_content = true;
 
-    mcqs = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
-    console.log(mcqs);
+    quiz = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
+
     prompt_modal.removeEventListener('hide.bs.modal', prevent_hide_modal);
     modal_instance.hide();
 
@@ -490,10 +512,10 @@ async function doGenerateWithAI(event) {
     btn_generating.removeAttribute("disabled");
     btn_generating_close.removeAttribute("disabled");
 
-    document.getElementById('mcq-form-title').value = mcqs.title;
-    document.getElementById('mcq-form-author').value = mcqs.author;
+    document.getElementById('mcq-form-title').value = quiz.title;
+    document.getElementById('mcq-form-author').value = quiz.author;
 
-    itemsChanged();
+    updateUIElements();
     saveSettings();
 }
 
@@ -514,13 +536,13 @@ document.addEventListener('DOMContentLoaded', function () {
     gemini_prompt_modal.style.transformOrigin = `${btn_gemini_rect.x} ${btn_gemini_rect.y}`;
     settings_modal.style.transformOrigin = `${btn_gemini.left} ${btn_gemini.top}`
 
-    document.getElementById('mcq-form-title').value = mcqs.title ?? "";
-    document.getElementById('mcq-form-author').value = mcqs.author ?? "";
+    document.getElementById('mcq-form-title').value = quiz.title ?? "";
+    document.getElementById('mcq-form-author').value = quiz.author ?? "";
     document.getElementById("genai-model-name").innerText = MODEL_NAME;
 
     const search_box = document.getElementById("search-box");
     search_box.addEventListener("keydown", () => filterQuestions(search_box.value));
     search_box.addEventListener("keyup", () => filterQuestions(search_box.value));
 
-    itemsChanged();
+    updateUIElements();
 });

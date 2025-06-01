@@ -1,7 +1,7 @@
-let domReady = (cb) => {
+let domReady = (callback) => {
   document.readyState === 'interactive' || document.readyState === 'complete'
-    ? cb()
-    : document.addEventListener('DOMContentLoaded', cb);
+    ? callback()
+    : document.addEventListener('DOMContentLoaded', callback);
 };
 
 domReady(() => {
