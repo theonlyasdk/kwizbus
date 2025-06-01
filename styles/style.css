@@ -290,4 +290,10 @@ html {
     #settings-modal.modal.fade {
         transition: opacity 0.1s cubic-bezier(.08, .57, .46, .99);
     }
+
+    .submit-row > button {
+        flex: 1;
+        font-size: 1.6em;
+    }
+
 }

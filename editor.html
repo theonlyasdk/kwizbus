@@ -31,8 +31,8 @@
                         <a class="nav-link active" aria-current="page" href="editor.html">Quiz Creator</a>
                     </li>
                 </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                <form class="d-flex" role="search" onsubmit="doSearch(event)">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search-box" />
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="mb-3">
                         <textarea class="form-control" id="question-description"
-                            placeholder="Enter a description (optional)"></textarea>
+                            placeholder="Enter a description (optional)" rows="5"></textarea>
                     </div>
                     <div>
                         <div class="options-list d-flex flex-column" id="options-list"></div>

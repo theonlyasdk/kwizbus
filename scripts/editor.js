@@ -174,9 +174,9 @@ function displayMCQList() {
                     <small>Question <b>#${index + 1}</b></small>
                     <button class="btn btn-danger btn-sm" onclick="removeMCQ(${index})">Delete</button>
                 </div> -->
-                <div class="mb-3">
-                    <div class="d-flex align-items-start mt-1">
-                        <h2 class="card-text flex-fill"><b>Q${index + 1}.</b> ${q.question}</h2>
+                <div class="mb-3 q-header">
+                    <div class="d-flex align-items-start mt-1 q-question-container">
+                        <h2 class="card-text flex-fill"><b>Q${index + 1}.</b> <span class="q-question">${q.question}</span></h2>
                         <button class="btn btn-danger btn-sm" onclick="removeMCQ(${index})">Delete</button>
                     </div>
                     <div class="question-description">${q.description}</div>                
@@ -422,6 +422,22 @@ async function askGeminiToGenerateJson(user_prompt) {
     }
 }
 
+function filterQuestions(filter) {
+    const questions = document.querySelectorAll('#mcq-list .card')
+    questions.forEach(question => {
+        question.classList.remove('d-none')
+        const title = question.querySelector('.card-body > .q-header > .q-question-container > h2.card-text > .q-question').innerText.toLowerCase()
+        if (!title.includes(filter)) {
+            question.classList.add('d-none')
+        }
+    })
+}
+
+function resetSearchFilters() {
+    const questions = document.querySelectorAll('#mcq-list .card-body.d-none')
+    questions.forEach(question => question.classList.remove('d-none'))
+}
+
 function closeGeminiModal() {
     if (generating_content)
         return;
@@ -481,6 +497,13 @@ async function doGenerateWithAI(event) {
     saveSettings();
 }
 
+function doSearch(event) {
+    event.preventDefault();
+
+    const search_box = document.getElementById("search-box");
+    filterQuestions(search_box.value);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const gemini_prompt_modal = document.querySelector("#gemini-prompt-modal.modal.fade .modal-dialog");
     const settings_modal = document.getElementById("settings-modal");
@@ -494,6 +517,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('mcq-form-title').value = mcqs.title ?? "";
     document.getElementById('mcq-form-author').value = mcqs.author ?? "";
     document.getElementById("genai-model-name").innerText = MODEL_NAME;
+
+    const search_box = document.getElementById("search-box");
+    search_box.addEventListener("keydown", () => filterQuestions(search_box.value));
+    search_box.addEventListener("keyup", () => filterQuestions(search_box.value));
 
     itemsChanged();
 });
