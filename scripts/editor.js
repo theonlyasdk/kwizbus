@@ -498,12 +498,14 @@ async function doGenerateWithAI(event) {
     btn_generating.innerText = "Generating...";
     btn_generating.setAttribute("disabled", "disabled");
     btn_generating_close.setAttribute("disabled", "disabled");
+    btn_generating.classList.add("shimmer");
 
     let amount_of_questions = num_questions !== "" ? `Amount of questions to generate: ${num_questions}` : "";
 
     generating_content = true;
 
-    quiz = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
+    // quiz = await askGeminiToGenerateJson(`${user_prompt}. ${amount_of_questions}`);
+    await test();
 
     prompt_modal.removeEventListener('hide.bs.modal', prevent_hide_modal);
     modal_instance.hide();
@@ -511,6 +513,7 @@ async function doGenerateWithAI(event) {
     btn_generating.innerText = "Generate";
     btn_generating.removeAttribute("disabled");
     btn_generating_close.removeAttribute("disabled");
+    btn_generating.classList.remove("shimmer");
 
     document.getElementById('mcq-form-title').value = quiz.title;
     document.getElementById('mcq-form-author').value = quiz.author;

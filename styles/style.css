@@ -235,6 +235,19 @@ html {
     transition: opacity 0.1s cubic-bezier(.08, .57, .46, .99);
 }
 
+.shimmer {
+    background: linear-gradient(-45deg, #eeeeee00 40%, #8dc4ff95 50%, #eeeeee00 60%);
+    background-size: 500%;
+    background-position-x: 100%;
+    animation: shimmer 4s infinite cubic-bezier(.08, .57, .17, 1) both;
+}
+
+@keyframes shimmer {
+    to {
+        background-position-x: 0;
+    }
+}
+
 @media (min-width: 769px) {
     .scroll-top-btn {
         display: none !important;
@@ -291,7 +304,7 @@ html {
         transition: opacity 0.1s cubic-bezier(.08, .57, .46, .99);
     }
 
-    .submit-row > button {
+    .submit-row>button {
         flex: 1;
         font-size: 1.6em;
     }
