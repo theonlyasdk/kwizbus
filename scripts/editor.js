@@ -545,8 +545,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("genai-model-name").innerText = MODEL_NAME;
 
     const search_box = document.getElementById("search-box");
-    search_box.addEventListener("keydown", () => filterQuestions(search_box.value));
-    search_box.addEventListener("keyup", () => filterQuestions(search_box.value));
+    search_box.addEventListener("input", () => filterQuestions(search_box.value));
+    search_box.addEventListener("change", () => filterQuestions(search_box.value));
 
     updateUIElements();
 });
