@@ -175,7 +175,7 @@ function displayQuestions() {
             <div class="card-body shadow-sm">
                 <div class="mb-3 q-header">
                     <div class="d-flex align-items-start mt-1 q-question-container">
-                        <h3 class="card-text flex-fill q-question-h3"><b>Q${index + 1}.</b> <span class="q-question">${q.question}</span></h3>
+                        <h3 class="card-text flex-fill q-question-h3"><b>${index + 1}.</b> <span class="q-question">${q.question}</span></h3>
                         <button class="btn btn-danger btn-sm" onclick="removeQuestion(${index})">Delete</button>
                     </div>
                     <div class="question-description">${q.description}</div>                
@@ -284,9 +284,12 @@ function copyLink() {
     const btn_copy_link = document.getElementById("copy-link");
     const copy_link_innerhtml = btn_copy_link.innerHTML;
 
+    const quizData = JSON.stringify(quiz);
+
+    const compressed_data_str = LZString.compressToEncodedURIComponent(quizData);
+
     const base_url = `${extractBasePath(document.location.href)}index.html`;
-    const encoded_data_str = encodeURIComponent(JSON.stringify(quiz, null, 2));
-    const final_url = `${base_url}?data=${encoded_data_str}`;
+    const final_url = `${base_url}?quizdata=${compressed_data_str}`;
 
     navigator.clipboard.writeText(final_url).then(() => {
         btn_copy_link.innerHTML = `
@@ -449,7 +452,7 @@ function filterQuestions(filter) {
     const questions = document.querySelectorAll('#mcq-list .card')
     questions.forEach(question => {
         question.classList.remove('d-none')
-        const title = question.querySelector('.card-body > .q-header > .q-question-container > h2.card-text > .q-question').innerText.toLowerCase()
+        const title = question.querySelector('.card-body > .q-header > .q-question-container > .card-text > .q-question').innerText.toLowerCase()
         if (!title.includes(filter)) {
             question.classList.add('d-none')
         }

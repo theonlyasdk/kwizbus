@@ -36,8 +36,9 @@
 
         <!-- Theme Selector Dropdown -->
         <div class="dropdown dropdown-center border-end me-lg-3 mb-2 mb-sm-0 d-flex d-md-block">
-          <button class="btn dropdown-toggle w-100 d-flex justify-content-md-between align-items-center" id="bd-theme" type="button" aria-expanded="false"
-            data-bs-toggle="dropdown" data-bs-display="static" title="Change theme to dark or light">
+          <button class="btn dropdown-toggle w-100 d-flex justify-content-md-between align-items-center" id="bd-theme"
+            type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static"
+            title="Change theme to dark or light">
             <i class="bi bi-circle-half"></i> &nbsp; Theme
           </button>
           <ul class="dropdown-menu dropdown-menu-lg-end shadow-sm" aria-labelledby="bd-theme">
@@ -61,7 +62,8 @@
 
         <!-- Search box -->
         <form class="d-flex" role="search" onsubmit="doSearch(event)">
-          <input class="form-control me-2" type="search" placeholder="Search questions..." aria-label="Search" id="search-box" />
+          <input class="form-control me-2" type="search" placeholder="Search questions..." aria-label="Search"
+            id="search-box" />
           <button class="btn btn-outline-success" type="submit" title="Search">
             <i class="bi bi-search"></i>
           </button>
@@ -110,13 +112,11 @@
         <div class="d-flex flex-row justify-content-between gap-2">
           <input type="file" class="d-none" id="import-mcq" aria-label="Import MCQs" accept="application/json"
             onchange="importMCQs()">
-          <button class="btn btn-outline-success"
-            onclick="openImportMCQChooser()" title="Import from JSON">
+          <button class="btn btn-outline-success" onclick="openImportMCQChooser()" title="Import from JSON">
             <i class="bi bi-download"></i>
             &nbsp;Import
           </button>
-          <button class="btn btn-outline-success"
-            onclick="downloadQuizAsJSON()" title="Export to JSON">
+          <button class="btn btn-outline-success" onclick="downloadQuizAsJSON()" title="Export to JSON">
             <i class="bi bi-upload"></i>
             &nbsp;Export
           </button>
@@ -279,6 +279,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.6/underscore-umd-min.js"></script>
+
+<!-- For permalink URL compression -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"
+  integrity="sha512-qtX0GLM3qX8rxJN1gyDfcnMFFrKvixfoEOwbBib9VafR5vbChV5LeE5wSI/x+IlCkTY5ZFddFDCCfaVJJNnuKQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
   const togglePassword = document.querySelector("#togglePassword");
   const password = document.querySelector("#gemini-api-key");

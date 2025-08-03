@@ -102,15 +102,29 @@ function loadQuizFromURL() {
 
     const url = window.location.href;
     const url_params = new URLSearchParams(url.split('?')[1]);
-    const encoded_data = url_params.get('data');
+    const compressed_data = url_params.get('quizdata');
 
-    if (encoded_data) {
-        const decoded_data = decodeURIComponent(encoded_data);
-        const decoded_json = JSON.parse(decoded_data);
+    if (compressed_data) {
+        let decoded_json;
+        try {
+            const decompressed_data = LZString.decompressFromEncodedURIComponent(compressed_data);
+            
+            if (!decompressed_data) {
+                console.warn("Failed to decompress data from URL.");
+                showToast("Invalid Link!", "The data in the URL could not be decompressed. It may be malformed.");
+                return;
+            }
+
+            decoded_json = JSON.parse(decompressed_data);
+        } catch (error) {
+            console.error("Error decoding or parsing quiz data from URL:", error);
+            showToast("Invalid Link!", "The data in the URL is not a valid quiz format. Please check the link.", error);
+            return;
+        }
 
         if (!validateQuizData(decoded_json)) {
-            console.warn("Invalid quiz data in URL:\n", decoded_data);
-            showToast("Invalid Link!", "Invalid data has been found in the URL! Please ask the author to make sure they've copied the link to a valid Quiz form! The following invalid data has been decoded from the URL:", decoded_data);
+            console.warn("Invalid quiz data in URL:\n", decoded_json);
+            showToast("Invalid Link!", "Invalid data has been found in the URL! Please ask the author to make sure they've copied the link to a valid Quiz form! The following invalid data has been decoded from the URL:", JSON.stringify(decoded_json, null, 2));
             return;
         }
 
