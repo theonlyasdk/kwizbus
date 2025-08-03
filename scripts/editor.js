@@ -90,14 +90,15 @@ function displayOptionsList() {
                 <button class="btn ${answer_button_class}" type="button"
                         title="Set as answer"
                         onclick="setAsAnswer(${option_id})">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M21 7L9 19l-5.5-5.5l1.41-1.41L9 16.17L19.59 5.59z"/></svg>
+                        <!-- Checkmark icon -->
+                        <i class="bi bi-check2"></i>
                 </button>
                 <button class="btn btn-outline-danger" type="button" 
                         id="${option_id}" 
                         title="Delete option" 
                         onclick="deleteOption(${option_id})">
                         <!-- Delete Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg>
+                        <i class="bi bi-trash-fill"></i>
                     </svg>
                 </button>
             </div>
@@ -171,7 +172,7 @@ function displayQuestions() {
         const div = document.createElement('div');
         div.className = 'card mb-3';
         div.innerHTML = `
-            <div class="card-body">
+            <div class="card-body shadow-sm">
                 <div class="mb-3 q-header">
                     <div class="d-flex align-items-start mt-1 q-question-container">
                         <h3 class="card-text flex-fill q-question-h3"><b>Q${index + 1}.</b> <span class="q-question">${q.question}</span></h3>
@@ -289,12 +290,12 @@ function copyLink() {
 
     navigator.clipboard.writeText(final_url).then(() => {
         btn_copy_link.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"/></svg>
-            Copied!
+            <i class="bi bi-check"></i>
+            &nbsp;Copied!
         `;
     }).catch(err => {
         btn_copy_link.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17q.425 0 .713-.288T13 16t-.288-.712T12 15t-.712.288T11 16t.288.713T12 17m-1-4h2V7h-2zm1 9q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"/></svg>
+            <i class="bi bi-exclamation-circle-fill"></i>
             &nbsp;Error!
         `;
         console.log(`Failed to copy ${final_url}: ${err}`);
