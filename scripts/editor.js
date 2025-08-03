@@ -46,7 +46,6 @@ function scrollElementToBottomIfOutsideViewport(elementId) {
                 behavior: 'smooth',
                 block: 'center'
             });
-        } else {
         }
     }
 }
