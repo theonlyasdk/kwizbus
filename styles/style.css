@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zen+Dots&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 * {
     scrollbar-width: thin;
@@ -37,7 +38,7 @@
 * {
     /* Crazy huh */
     transition: all 500ms cubic-bezier(.1, .2, 0, .98);
-    font-family: "Source Sans 3", sans-serif;
+    font-family: "Inter", sans-serif;
 }
 
 body,
@@ -204,7 +205,7 @@ html {
 }
 
 .card {
-    box-shadow: 4px 6px 14px -2px #00000031;
+    /* box-shadow: 4px 6px 14px -2px #00000031; */
 }
 
 #gemini-prompt-modal.modal.fade .modal-dialog {
