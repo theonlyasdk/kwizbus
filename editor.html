@@ -12,8 +12,9 @@
     <script src="scripts/bs_color_mode.js"></script>
 </head>
 
-<!-- Inline styles to override all other styles -->
-<body style="filter: blur(5px); opacity: 0; transform: scale(1.2); transition: all 700ms cubic-bezier(.08, .57, .17, 1); overflow: hidden;">
+<!-- This is the animation you see when opening the page -->
+
+<body style="filter: blur(5px); opacity: 0; transition: all 700ms cubic-bezier(.08, .57, .17, 1); overflow: hidden;">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Kwizbus</a>
@@ -32,7 +33,8 @@
                     </li>
                 </ul>
                 <form class="d-flex" role="search" onsubmit="doSearch(event)">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search-box" />
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                        id="search-box" />
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
@@ -46,8 +48,8 @@
                     <div class="d-flex flex-row justify-content-between mb-3">
                         <h1 class="card-title align-content-center" style="margin-bottom: 0;"><b>Add Question</b></h1>
                         <button type="button" class="btn btn-outline-info" title="Generate with AI"
-                            data-bs-toggle="modal" data-bs-target="#gemini-prompt-modal"><i
-                                class="bi bi-stars" id="btn-generate"></i></button>
+                            data-bs-toggle="modal" data-bs-target="#gemini-prompt-modal"><i class="bi bi-stars"
+                                id="btn-generate"></i></button>
                     </div>
 
                     <div class="input-group mb-3">
@@ -125,7 +127,8 @@
                                 d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5" />
                         </svg>
                     </button>
-                    <button class="btn btn-primary" id="btn-clear-questions" onclick="clearAllQuestions()">Clear All</button>
+                    <button class="btn btn-primary" id="btn-clear-questions" onclick="clearAllQuestions()">Clear
+                        All</button>
                 </div>
             </div>
             <div class="nothing-here text-muted" id="nothing-here">
