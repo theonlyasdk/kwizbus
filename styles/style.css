@@ -122,6 +122,9 @@ html {
     flex: 1;
 }
 
+.q-question-h3 {
+    margin-right: 0.8em;
+}
 
 .q-options {
     display: flex;

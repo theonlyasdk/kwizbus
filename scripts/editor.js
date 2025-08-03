@@ -174,7 +174,7 @@ function displayQuestions() {
             <div class="card-body">
                 <div class="mb-3 q-header">
                     <div class="d-flex align-items-start mt-1 q-question-container">
-                        <h2 class="card-text flex-fill"><b>Q${index + 1}.</b> <span class="q-question">${q.question}</span></h2>
+                        <h3 class="card-text flex-fill q-question-h3"><b>Q${index + 1}.</b> <span class="q-question">${q.question}</span></h3>
                         <button class="btn btn-danger btn-sm" onclick="removeQuestion(${index})">Delete</button>
                     </div>
                     <div class="question-description">${q.description}</div>                
