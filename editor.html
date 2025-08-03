@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kwizbus - Quiz Creator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="styles/style.css">
   <script src="scripts/fade_in_page.js"></script>
   <script src="scripts/bs_color_mode.js"></script>
@@ -15,13 +14,16 @@
 <!-- This is the animation you see when opening the page -->
 
 <body style="filter: blur(5px); opacity: 0; transition: all 700ms cubic-bezier(.08, .57, .17, 1); overflow: hidden;">
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Kwizbus</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+
+      <!-- Navbar content -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
@@ -31,33 +33,38 @@
             <a class="nav-link active" aria-current="page" href="editor.html">Quiz Creator</a>
           </li>
         </ul>
-        
-        <div class="dropdown">
-            <button class="btn dropdown-toggle"
-              id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static">
-              <i class="bi bi-circle-half"></i> &nbsp; Theme
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="bd-theme">
-              <li>
-                <button type="button" class="dropdown-item" data-bs-theme-value="light">
-                  <i class="bi bi-brightness-high-fill"></i> &nbsp; Light
-                </button>
-              </li>
-              <li>
-                <button type="button" class="dropdown-item" data-bs-theme-value="dark">
-                  <i class="bi bi-moon-fill"></i> &nbsp; Dark
-                </button>
-              </li>
-              <li>
-                <button type="button" class="dropdown-item" data-bs-theme-value="auto">
-                  <i class="bi bi-circle-half"></i> &nbsp; System Default
-                </button>
-              </li>
-            </ul>
+
+        <!-- Theme Selector Dropdown -->
+        <div class="dropdown dropdown-center border-end me-lg-3 mb-2 mb-sm-0 d-flex d-md-block">
+          <button class="btn dropdown-toggle w-100 d-flex justify-content-md-between align-items-center" id="bd-theme" type="button" aria-expanded="false"
+            data-bs-toggle="dropdown" data-bs-display="static">
+            <i class="bi bi-circle-half"></i> &nbsp; Theme
+          </button>
+          <ul class="dropdown-menu dropdown-menu-lg-end shadow-sm" aria-labelledby="bd-theme">
+            <li>
+              <button type="button" class="dropdown-item" data-bs-theme-value="light">
+                <i class="bi bi-brightness-high-fill"></i> &nbsp; Light
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item" data-bs-theme-value="dark">
+                <i class="bi bi-moon-fill"></i> &nbsp; Dark
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item" data-bs-theme-value="auto">
+                <i class="bi bi-circle-half"></i> &nbsp; System Default
+              </button>
+            </li>
+          </ul>
         </div>
+
+        <!-- Search box -->
         <form class="d-flex" role="search" onsubmit="doSearch(event)">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search-box" />
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <input class="form-control me-2" type="search" placeholder="Search questions..." aria-label="Search" id="search-box" />
+          <button class="btn btn-outline-success" type="submit" title="Search">
+            <i class="bi bi-search"></i>
+          </button>
         </form>
       </div>
     </div>
@@ -68,9 +75,13 @@
       <div class="card-body">
         <form onsubmit="addQuestion(event)">
           <div class="d-flex flex-row justify-content-between mb-3">
-            <h1 class="card-title align-content-center" style="margin-bottom: 0;"><b>Add Question</b></h1>
-            <button type="button" class="btn btn-outline-info" title="Generate with AI" data-bs-toggle="modal"
-              data-bs-target="#gemini-prompt-modal"><i class="bi bi-stars" id="btn-generate"></i></button>
+            <h2 class="card-title align-content-center" style="margin-bottom: 0;">
+              <b>Add Question</b>
+            </h2>
+            <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+              data-bs-target="#gemini-prompt-modal" title="Generate with AI">
+              <i class="bi bi-stars" id="btn-generate"></i>
+            </button>
           </div>
 
           <div class="input-group mb-3">
@@ -85,9 +96,9 @@
             <div class="options-list d-flex flex-column" id="options-list"></div>
           </div>
           <div class="d-flex gap-2 mb-3">
-            <button type="button" class="btn btn-outline-primary flex-fill" id="btn-add-option"
-              onclick="addOption()">Add
-              option</button>
+            <button type="button" class="btn btn-outline-primary flex-fill" id="btn-add-option" onclick="addOption()">
+              Add option
+            </button>
             <button type="submit"
               class="btn btn-primary d-flex flex-fill flex-row justify-content-center align-items-center">
               <i class="bi bi-plus d-flex"></i>
@@ -99,34 +110,19 @@
         <div class="d-flex flex-row justify-content-between gap-2">
           <input type="file" class="d-none" id="import-mcq" aria-label="Import MCQs" accept="application/json"
             onchange="importMCQs()">
-          <button class="btn btn-outline-success flex-fill d-flex flex-row justify-content-center align-items-center"
+          <button class="btn btn-outline-success"
             onclick="openImportMCQChooser()" title="Import from JSON">
-            <div class="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
-                <path fill="currentColor"
-                  d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z" />
-              </svg>
-            </div>
-            Import
+            <i class="bi bi-download"></i>
+            &nbsp;Import
           </button>
-          <button class="btn btn-outline-success flex-fill d-flex flex-row justify-content-center align-items-center"
+          <button class="btn btn-outline-success"
             onclick="downloadQuizAsJSON()" title="Export to JSON">
-            <div class="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill="currentColor"
-                  d="M11 16V7.85l-2.6 2.6L7 9l5-5l5 5l-1.4 1.45l-2.6-2.6V16zm-5 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z" />
-              </svg>
-            </div>
-            Export
+            <i class="bi bi-upload"></i>
+            &nbsp;Export
           </button>
-          <button class="btn btn-outline-info p-2 flex-fill d-flex flex-row justify-content-center align-items-center"
+          <button class="btn btn-outline-info flex-fill d-flex flex-row justify-content-center align-items-center"
             onclick="copyLink()" id="copy-link" title="Copy the permalink to this form. (Experimental)">
-            <div class="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
-                <path fill="currentColor"
-                  d="M11 17H7q-2.075 0-3.537-1.463T2 12t1.463-3.537T7 7h4v2H7q-1.25 0-2.125.875T4 12t.875 2.125T7 15h4zm-3-4v-2h8v2zm5 4v-2h4q1.25 0 2.125-.875T20 12t-.875-2.125T17 9h-4V7h4q2.075 0 3.538 1.463T22 12t-1.463 3.538T17 17z" />
-              </svg>
-            </div>
+            <i class="bi bi-link-45deg"></i>
             &nbsp;Copy Link
           </button>
         </div>
@@ -134,17 +130,21 @@
     </div>
 
     <div class="right-panel flex-column">
-      <div class="mb-4 d-flex">
-        <h1 class="flex-grow-1 align-content-center" style="margin-bottom: 0;"><b>Your Questions</b></h1>
+      <div class="d-flex">
+        <h2 class="flex-grow-1 align-content-center mb-0">
+          <b>Your Questions</b>
+        </h2>
         <div class="d-flex flex-row gap-2">
-          <button class="btn btn-secondary" id="btn-settings" data-bs-toggle="modal"
-            data-bs-target="#settings-modal" title="Settings">
+          <button class="btn btn-secondary" id="btn-settings" data-bs-toggle="modal" data-bs-target="#settings-modal"
+            title="Settings">
             <i class="bi bi-gear-fill"></i>
           </button>
-          <button class="btn btn-primary" id="btn-clear-questions" onclick="clearAllQuestions()">Clear
-            All</button>
+          <button class="btn btn-primary" id="btn-clear-questions" onclick="clearAllQuestions()">
+            Clear All
+          </button>
         </div>
       </div>
+      <hr>
       <div class="nothing-here text-muted" id="nothing-here">
         <div class="nothing-here-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="10em" height="10em" viewBox="0 0 24 24">
@@ -248,7 +248,9 @@
             </div>
           </div>
           <div class="modal-footer d-flex justify-content-between">
-            <small><b>Model:&nbsp;&nbsp;</b><code id="genai-model-name">gemma-3-27b-it</code></small>
+            <small class="d-flex justify-content-center align-content-center align-items-center">
+              <b>Model:&nbsp;&nbsp;</b><code id="genai-model-name">gemma-3-27b-it</code>
+            </small>
             <button type="submit" class="btn btn-primary" aria-label="Close" id="btn-generating">Generate</button>
           </div>
         </form>

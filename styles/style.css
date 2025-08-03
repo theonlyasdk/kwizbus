@@ -1,6 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zen+Dots&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+/* Google Fonts: Inter, Noto Sans Mono, Source Sans */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+Mono:wght@100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zen+Dots&display=swap');
+
+/* Bootstrap icons */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
 
 * {
     scrollbar-width: thin;
@@ -37,7 +39,7 @@
 
 * {
     /* Crazy huh */
-    transition: all 500ms cubic-bezier(.1, .2, 0, .98);
+    /* transition: all 500ms cubic-bezier(.1, .2, 0, .98); */
     font-family: "Inter", sans-serif;
 }
 
@@ -246,6 +248,15 @@ html {
     animation: shimmer 4s infinite cubic-bezier(.08, .57, .17, 1) both;
 }
 
+.btn.dropdown-toggle.d-flex .bi {
+  font-size: 0.7rem;
+}
+
+code#genai-model-name {
+    font-family: "Noto Sans Mono", "Consolas", monospace;
+    font-size: 0.8rem;
+}
+
 @keyframes shimmer {
     to {
         background-position-x: 0;
@@ -313,4 +324,8 @@ html {
         font-size: 1.6em;
     }
 
+    .dropdown.border-end {
+        border: none !important;
+    }
 }
+
