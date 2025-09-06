@@ -7,7 +7,7 @@ let options = [];
 let answer_index = -1;
 let GEMINI_API_KEY = localStorage.getItem('gemini.api-key');
 let generating_content = false;
-const MODEL_NAME = "gemma-3-27b-it";
+const MODEL_NAME = "gemini-2.5-pro";
 
 function updateClearButtonVisibility() {
     const clearBtn = document.getElementById('btn-clear-questions');
